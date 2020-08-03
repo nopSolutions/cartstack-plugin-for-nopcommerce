@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widgets",
+  "FriendlyName": "CartStack",
+  "SystemName": "Widgets.CartStack",
+  "Version": "1.00",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "nopCommerce team",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.CartStack.dll",
+  "Description": "This plugin integrates with CartStack. CartStack offers a cart & visitor abandonment solution for e-commerce and reservation websites."
+}
