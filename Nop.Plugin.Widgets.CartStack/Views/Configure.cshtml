@@ -10,16 +10,7 @@
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-body">
-                <p>
-                    Follow these steps to configure the CartStack plugin:<br />
-                    1. <a href="https://admin.cartstack.com/login?utm_source=nopcommerce_plugin&utm_medium=plugin&utm_campaign=module_link" target="_blank">Log-in</a> into your account. If you haven't already created a free trial account, you can <a href="http://www.cartstack.com/sign-up?utm_source=nopcommerce_plugin&utm_medium=plugin&utm_campaign=module_link" target="_blank">sign-up here</a>.<br />
-                    2. Navigate to the <b>Code Installation</b> page.<br />
-                    3. Choose <b>nopCommerce</b> as your website platform.<br />
-                    4. Find your unique Tracking Code snippet and copy it into the field below on this configuration page.<br />
-                    5. Copy <em>@Url.Action("Completed", "Checkout", new { area = string.Empty }, webHelper.CurrentRequestProtocol)</em> URL and paste it into <b>Confirmation Page URL</b> field on the <b>Code Installation</b> page.<br />
-                    6. Save the configuration.<br />
-                    <br />
-                </p>
+                <p>For configuration instructions, visit the <a href="https://help.cartstack.com/article/74-nopcommerce" target="_blank">nopCommerce setup page</a>.</p>
                 <div class="form-group">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="TrackingCode_OverrideForStore" asp-input="TrackingCode" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
