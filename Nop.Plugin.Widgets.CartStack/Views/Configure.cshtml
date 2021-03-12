@@ -6,12 +6,32 @@
 
 @await Component.InvokeAsync("StoreScopeConfiguration")
 
+<script>
+    $(document).ready(function () {
+        $("#@Html.IdFor(model => model.UseServerSideApi)").click(toggleServerSide);
+        toggleServerSide();
+    });
+
+    function toggleServerSide() {
+        if ($('#@Html.IdFor(model => model.UseServerSideApi)').is(':checked')) {
+            $('#site-id').show();
+            $('#api-key').show();
+        }
+        else {
+            $('#site-id').hide();
+            $('#api-key').hide();
+        }
+    }
+</script>
+
 <form asp-controller="CartStack" asp-action="Configure" method="post">
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <p>For configuration instructions, visit the <a href="https://help.cartstack.com/article/74-nopcommerce" target="_blank">nopCommerce setup page</a>.</p>
-                <div class="form-group">
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-body">
+                <p>
+                    For configuration instructions, visit the <a href="https://help.cartstack.com/article/74-nopcommerce?utm_source=nopcommerce_plugin&utm_medium=plugin&utm_campaign=module_link" target="_blank">nopCommerce setup page</a>.
+                </p>
+                <div class="form-group row">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="TrackingCode_OverrideForStore" asp-input="TrackingCode" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                         <nop-label asp-for="TrackingCode" />
@@ -21,7 +41,7 @@
                         <span asp-validation-for="TrackingCode"></span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group row">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="UseServerSideApi_OverrideForStore" asp-input="UseServerSideApi" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                         <nop-label asp-for="UseServerSideApi" />
@@ -32,7 +52,7 @@
                     </div>
                 </div>
                 <nop-nested-setting asp-for="UseServerSideApi">
-                    <div class="form-group" id="site-id">
+                    <div class="form-group row" id="site-id">
                         <div class="col-md-3">
                             <nop-override-store-checkbox asp-for="SiteId_OverrideForStore" asp-input="SiteId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                             <nop-label asp-for="SiteId" />
@@ -42,7 +62,7 @@
                             <span asp-validation-for="SiteId"></span>
                         </div>
                     </div>
-                    <div class="form-group" id="api-key">
+                    <div class="form-group row" id="api-key">
                         <div class="col-md-3">
                             <nop-override-store-checkbox asp-for="ApiKey_OverrideForStore" asp-input="ApiKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                             <nop-label asp-for="ApiKey" />
@@ -53,25 +73,8 @@
                         </div>
                     </div>
                 </nop-nested-setting>
-                <script>
-                    $(document).ready(function () {
-                        $("#@Html.IdFor(model => model.UseServerSideApi)").click(toggleServerSide);
-                        toggleServerSide();
-                    });
-
-                    function toggleServerSide() {
-                        if ($('#@Html.IdFor(model => model.UseServerSideApi)').is(':checked')) {
-                            $('#site-id').show();
-                            $('#api-key').show();
-                        }
-                        else {
-                            $('#site-id').hide();
-                            $('#api-key').hide();
-                        }
-                    }
-                </script>
-                <div class="form-group">
-                    <div class="col-md-9 col-md-offset-3">
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
                         <input type="submit" name="save" class="btn btn-primary" value="@T("Admin.Common.Save")" />
                     </div>
                 </div>

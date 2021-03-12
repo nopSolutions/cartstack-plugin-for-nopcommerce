@@ -15,7 +15,7 @@ namespace Nop.Plugin.Widgets.CartStack
         /// <summary>
         /// Gets the user agent used to request third-party services
         /// </summary>
-        public static string UserAgent => $"nopcommerce-{NopVersion.CurrentVersion}";
+        public static string UserAgent => $"nopcommerce-{NopVersion.CURRENT_VERSION}";
 
         /// <summary>
         /// Gets the server side API URL

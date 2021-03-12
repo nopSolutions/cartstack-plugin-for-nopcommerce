@@ -7,7 +7,7 @@ namespace Nop.Plugin.Widgets.CartStack.Models
     /// <summary>
     /// Represents configuration model
     /// </summary>
-    public class ConfigurationModel : BaseNopModel
+    public record ConfigurationModel : BaseNopModel
     {
         #region Properties
 
@@ -23,7 +23,6 @@ namespace Nop.Plugin.Widgets.CartStack.Models
 
         [NopResourceDisplayName("Plugins.Widgets.CartStack.Fields.ApiKey")]
         [DataType(DataType.Password)]
-        [NoTrim]
         public string ApiKey { get; set; }
         public bool ApiKey_OverrideForStore { get; set; }
 

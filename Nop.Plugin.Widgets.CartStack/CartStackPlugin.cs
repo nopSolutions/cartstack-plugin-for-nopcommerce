@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -61,10 +62,13 @@ namespace Nop.Plugin.Widgets.CartStack
         /// <summary>
         /// Gets widget zones where this widget should be rendered
         /// </summary>
-        /// <returns>Widget zones</returns>
-        public IList<string> GetWidgetZones()
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the widget zones
+        /// </returns>
+        public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return new List<string> { _cartStackSettings.WidgetZone };
+            return Task.FromResult<IList<string>>(new List<string> { _cartStackSettings.WidgetZone });
         }
 
         /// <summary>
@@ -83,15 +87,15 @@ namespace Nop.Plugin.Widgets.CartStack
         /// <summary>
         /// Install plugin
         /// </summary>
-        public override void Install()
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public override async Task InstallAsync()
         {
-            //settings
-            _settingService.SaveSetting(new CartStackSettings
+            await _settingService.SaveSettingAsync(new CartStackSettings
             {
                 WidgetZone = PublicWidgetZones.HeadHtmlTag
             });
 
-            _localizationService.AddPluginLocaleResource(new Dictionary<string, string>
+            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Widgets.CartStack.ThankYouPage.Warning"] = "It looks like you have <a href=\"{0}\" target=\"_blank\">DisableOrderCompletedPage</a> setting enabled, so this can lead to incorrect tracking of purchases. You should uncheck this setting, if you don't, CartStack won't know to stop the reminder email from being sent.",
                 ["Plugins.Widgets.CartStack.Fields.TrackingCode"] = "Tracking Code",
@@ -107,21 +111,22 @@ namespace Nop.Plugin.Widgets.CartStack
                 ["Plugins.Widgets.CartStack.Fields.UseServerSideApi.Hint"] = "Quite simply, the server side integration is more accurate than the client side confirmation tracking. Since the client side tracking relies on the end user's browser settings, a small percentage of conversions may be missed. The server side integration should be 100% accurate."
             });
 
-            base.Install();
+            await base.InstallAsync();
         }
 
         /// <summary>
         /// Uninstall plugin
         /// </summary>
-        public override void Uninstall()
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public override async Task UninstallAsync()
         {
             _widgetSettings.ActiveWidgetSystemNames.Remove(CartStackDefaults.SystemName);
-            _settingService.SaveSetting(_widgetSettings);
-            _settingService.DeleteSetting<CartStackSettings>();
+            await _settingService.SaveSettingAsync(_widgetSettings);
+            await _settingService.DeleteSettingAsync<CartStackSettings>();
 
-            _localizationService.DeletePluginLocaleResources("Plugins.Widgets.CartStack");
+            await _localizationService.DeleteLocaleResourcesAsync("Plugins.Widgets.CartStack");
 
-            base.Uninstall();
+            await base.UninstallAsync();
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Cms;
@@ -52,17 +53,20 @@ namespace Nop.Plugin.Widgets.CartStack.Services
         /// </summary>
         /// <typeparam name="TResult">Result type</typeparam>
         /// <param name="function">Function</param>
-        /// <returns>Result</returns>
-        private TResult HandleFunction<TResult>(Func<TResult> function)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the function result
+        /// </returns>
+        private async Task<TResult> HandleFunctionAsync<TResult>(Func<Task<TResult>> function)
         {
             try
             {
                 //check whether the plugin is active
-                if (!PluginActive())
+                if (!await IsPluginActiveAsync())
                     return default;
 
                 //invoke function
-                return function();
+                return await function();
             }
             catch (Exception exception)
             {
@@ -75,8 +79,9 @@ namespace Nop.Plugin.Widgets.CartStack.Services
 
 
                 //log errors
+                var customer = await _workContext.GetCurrentCustomerAsync();
                 var error = $"{CartStackDefaults.SystemName} error: {Environment.NewLine}{exception.Message}";
-                _logger.Error(error, exception, _workContext.CurrentCustomer);
+                await _logger.ErrorAsync(error, exception, customer);
 
                 return default;
             }
@@ -85,10 +90,15 @@ namespace Nop.Plugin.Widgets.CartStack.Services
         /// <summary>
         /// Check whether the plugin is active for the current customer and the current store
         /// </summary>
-        /// <returns>Result</returns>
-        private bool PluginActive()
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the check result
+        /// </returns>
+        private async Task<bool> IsPluginActiveAsync()
         {
-            return _widgetPluginManager.IsPluginActive(CartStackDefaults.SystemName, _workContext.CurrentCustomer, _storeContext.CurrentStore.Id);
+            var customer = await _workContext.GetCurrentCustomerAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            return await _widgetPluginManager.IsPluginActiveAsync(CartStackDefaults.SystemName, customer, store.Id);
         }
 
         #endregion
@@ -98,12 +108,15 @@ namespace Nop.Plugin.Widgets.CartStack.Services
         /// <summary>
         /// Prepare tracking code
         /// </summary>
-        /// <returns>Tracking code</returns>
-        public string PrepareTrackingCode()
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the tracking code
+        /// </returns>
+        public async Task<string> PrepareTrackingCodeAsync()
         {
-            return HandleFunction(() =>
+            return await HandleFunctionAsync(() =>
             {
-                return _cartStackSettings.TrackingCode;
+                return Task.FromResult(_cartStackSettings.TrackingCode);
             });
         }
 
@@ -111,12 +124,14 @@ namespace Nop.Plugin.Widgets.CartStack.Services
         /// Confirm that order has taken place
         /// </summary>
         /// <param name="order">Order</param>
-        public void ConfirmTracking(Order order)
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public async Task ConfirmTrackingAsync(Order order)
         {
-            HandleFunction(() =>
+            await HandleFunctionAsync(async () =>
             {
                 //check whether the purchase was initiated by the customer
-                if (order?.CustomerId != _workContext.CurrentCustomer.Id)
+                var customer = await _workContext.GetCurrentCustomerAsync();
+                if (order?.CustomerId != customer.Id)
                     return false;
 
                 //whether server side API is enabled
@@ -124,10 +139,11 @@ namespace Nop.Plugin.Widgets.CartStack.Services
                     return false;
 
                 //confirm tracking
-                var email = _addressService.GetAddressById(order.BillingAddressId)?.Email;
+                var address = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
+                var email = address?.Email;
                 if (string.IsNullOrEmpty(email))
-                    email = _workContext.CurrentCustomer.Email;
-                _cartStackHttpClient.ConfirmTrackingAsync(email, order.OrderTotal).Wait();
+                    email = customer.Email;
+                await _cartStackHttpClient.ConfirmTrackingAsync(email, order.OrderTotal);
 
                 return true;
             });

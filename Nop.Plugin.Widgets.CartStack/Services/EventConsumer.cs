@@ -1,4 +1,5 @@
-﻿using Nop.Core.Domain.Orders;
+﻿using System.Threading.Tasks;
+using Nop.Core.Domain.Orders;
 using Nop.Services.Events;
 
 namespace Nop.Plugin.Widgets.CartStack.Services
@@ -29,9 +30,11 @@ namespace Nop.Plugin.Widgets.CartStack.Services
         /// Handle order placed event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        public void HandleEvent(OrderPlacedEvent eventMessage)
+        /// <returns>
+        /// A task that represents the asynchronous operation</returns>
+        public async Task HandleEventAsync(OrderPlacedEvent eventMessage)
         {
-            _cartStackService.ConfirmTracking(eventMessage?.Order);
+            await _cartStackService.ConfirmTrackingAsync(eventMessage?.Order);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Widgets.CartStack.Models;
@@ -49,14 +50,14 @@ namespace Nop.Plugin.Widgets.CartStack.Controllers
 
         #region Methods
 
-        public IActionResult Configure()
+        public async Task<IActionResult> Configure()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageWidgets))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageWidgets))
                 return AccessDeniedView();
 
-            //prepare the model
-            var storeId = _storeContext.ActiveStoreScopeConfiguration;
-            var settings = _settingService.LoadSetting<CartStackSettings>(storeId);
+            var storeId = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var settings = await _settingService.LoadSettingAsync<CartStackSettings>(storeId);
+
             var model = new ConfigurationModel
             {
                 TrackingCode = settings.TrackingCode,
@@ -67,47 +68,49 @@ namespace Nop.Plugin.Widgets.CartStack.Controllers
             };
             if (storeId > 0)
             {
-                model.TrackingCode_OverrideForStore = _settingService.SettingExists(settings, setting => setting.TrackingCode, storeId);
-                model.SiteId_OverrideForStore = _settingService.SettingExists(settings, setting => setting.SiteId, storeId);
-                model.ApiKey_OverrideForStore = _settingService.SettingExists(settings, setting => setting.ApiKey, storeId);
-                model.UseServerSideApi_OverrideForStore = _settingService.SettingExists(settings, setting => setting.UseServerSideApi, storeId);
+                model.TrackingCode_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.TrackingCode, storeId);
+                model.SiteId_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.SiteId, storeId);
+                model.ApiKey_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.ApiKey, storeId);
+                model.UseServerSideApi_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.UseServerSideApi, storeId);
             }
 
             //display a warning when the 'thank you' page is disabled
             if (_orderSettings.DisableOrderCompletedPage)
             {
-                _notificationService.WarningNotification(string.Format(_localizationService
-                    .GetResource("Plugins.Widgets.CartStack.ThankYouPage.Warning"), Url.Action("Order", "Setting")), false);
+                var locale = await _localizationService.GetResourceAsync("Plugins.Widgets.CartStack.ThankYouPage.Warning");
+                _notificationService.WarningNotification(string.Format(locale, Url.Action("Order", "Setting")), false);
             }
 
             return View("~/Plugins/Widgets.CartStack/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
-        public IActionResult Configure(ConfigurationModel model)
+        public async Task<IActionResult> Configure(ConfigurationModel model)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageWidgets))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageWidgets))
                 return AccessDeniedView();
 
             if (!ModelState.IsValid)
-                return Configure();
+                return await Configure();
 
-            //save settings
-            var storeId = _storeContext.ActiveStoreScopeConfiguration;
-            var settings = _settingService.LoadSetting<CartStackSettings>(storeId);
+            var storeId = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var settings = await _settingService.LoadSettingAsync<CartStackSettings>(storeId);
+
             settings.TrackingCode = model.TrackingCode;
             settings.SiteId = model.SiteId;
             settings.ApiKey = model.ApiKey;
             settings.UseServerSideApi = model.UseServerSideApi;
-            _settingService.SaveSettingOverridablePerStore(settings, setting => setting.TrackingCode, model.TrackingCode_OverrideForStore, storeId, false);
-            _settingService.SaveSettingOverridablePerStore(settings, setting => setting.SiteId, model.SiteId_OverrideForStore, storeId, false);
-            _settingService.SaveSettingOverridablePerStore(settings, setting => setting.ApiKey, model.ApiKey_OverrideForStore, storeId, false);
-            _settingService.SaveSettingOverridablePerStore(settings, setting => setting.UseServerSideApi, model.UseServerSideApi_OverrideForStore, storeId, false);
-            _settingService.ClearCache();
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.TrackingCode, model.TrackingCode_OverrideForStore, storeId, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.SiteId, model.SiteId_OverrideForStore, storeId, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.ApiKey, model.ApiKey_OverrideForStore, storeId, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.UseServerSideApi, model.UseServerSideApi_OverrideForStore, storeId, false);
 
-            return Configure();
+            await _settingService.ClearCacheAsync();
+
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
+
+            return await Configure();
         }
 
         #endregion

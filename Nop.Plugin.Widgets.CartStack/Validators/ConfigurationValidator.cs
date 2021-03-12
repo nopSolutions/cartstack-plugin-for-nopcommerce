@@ -16,16 +16,16 @@ namespace Nop.Plugin.Widgets.CartStack.Validators
         {
             RuleFor(model => model.TrackingCode)
                 .NotEmpty()
-                .WithMessage(localizationService.GetResource("Plugins.Widgets.CartStack.Fields.TrackingCode.Required"));
+                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.TrackingCode.Required"));
 
             RuleFor(model => model.SiteId)
                 .NotEmpty()
-                .WithMessage(localizationService.GetResource("Plugins.Widgets.CartStack.Fields.SiteId.Required"))
+                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.SiteId.Required"))
                 .When(model => model.UseServerSideApi);
 
             RuleFor(model => model.ApiKey)
                 .NotEmpty()
-                .WithMessage(localizationService.GetResource("Plugins.Widgets.CartStack.Fields.ApiKey.Required"))
+                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.ApiKey.Required"))
                 .When(model => model.UseServerSideApi);
         }
 
