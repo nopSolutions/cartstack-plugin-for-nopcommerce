@@ -95,7 +95,7 @@ namespace Nop.Plugin.Widgets.CartStack
                 WidgetZone = PublicWidgetZones.HeadHtmlTag
             });
 
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Widgets.CartStack.ThankYouPage.Warning"] = "It looks like you have <a href=\"{0}\" target=\"_blank\">DisableOrderCompletedPage</a> setting enabled, so this can lead to incorrect tracking of purchases. You should uncheck this setting, if you don't, CartStack won't know to stop the reminder email from being sent.",
                 ["Plugins.Widgets.CartStack.Fields.TrackingCode"] = "Tracking Code",

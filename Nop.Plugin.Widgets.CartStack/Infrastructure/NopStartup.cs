@@ -20,6 +20,7 @@ namespace Nop.Plugin.Widgets.CartStack.Infrastructure
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpClient<CartStackHttpClient>().WithProxy();
+            services.AddScoped<CartStackService>();
         }
 
         /// <summary>
@@ -33,6 +34,6 @@ namespace Nop.Plugin.Widgets.CartStack.Infrastructure
         /// <summary>
         /// Gets order of this startup configuration implementation
         /// </summary>
-        public int Order => 101;
+        public int Order => 3000;
     }
 }
