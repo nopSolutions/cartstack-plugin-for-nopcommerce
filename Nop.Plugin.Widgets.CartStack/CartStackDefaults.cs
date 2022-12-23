@@ -26,10 +26,5 @@ namespace Nop.Plugin.Widgets.CartStack
         /// Gets the configuration route name
         /// </summary>
         public static string ConfigurationRouteName => "Plugin.Widgets.CartStack.Configure";
-
-        /// <summary>
-        /// Gets the name of the view component to place a widget into pages
-        /// </summary>
-        public const string VIEW_COMPONENT = "CartStack";
     }
 }

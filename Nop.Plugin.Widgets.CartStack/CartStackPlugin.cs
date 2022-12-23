@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Nop.Core.Domain.Cms;
+using Nop.Plugin.Widgets.CartStack.Components;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -76,12 +77,12 @@ namespace Nop.Plugin.Widgets.CartStack
         /// </summary>
         /// <param name="widgetZone">Name of the widget zone</param>
         /// <returns>View component name</returns>
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
             if (widgetZone == null)
                 throw new ArgumentNullException(nameof(widgetZone));
 
-            return CartStackDefaults.VIEW_COMPONENT;
+            return typeof(CartStackViewComponent);
         }
 
         /// <summary>

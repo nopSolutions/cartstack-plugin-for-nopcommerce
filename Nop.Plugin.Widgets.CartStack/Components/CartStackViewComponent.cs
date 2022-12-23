@@ -10,7 +10,7 @@ namespace Nop.Plugin.Widgets.CartStack.Components
     /// <summary>
     /// Represents the view component to place a widget into pages
     /// </summary>
-    [ViewComponent(Name = CartStackDefaults.VIEW_COMPONENT)]
+    [ViewComponent(Name = "CartStack")]
     public class CartStackViewComponent : NopViewComponent
     {
         #region Fields
