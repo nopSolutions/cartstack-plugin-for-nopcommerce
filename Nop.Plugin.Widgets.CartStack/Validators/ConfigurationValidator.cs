@@ -3,32 +3,31 @@ using Nop.Plugin.Widgets.CartStack.Models;
 using Nop.Services.Localization;
 using Nop.Web.Framework.Validators;
 
-namespace Nop.Plugin.Widgets.CartStack.Validators
+namespace Nop.Plugin.Widgets.CartStack.Validators;
+
+/// <summary>
+/// Represents configuration model validator
+/// </summary>
+public class ConfigurationValidator : BaseNopValidator<ConfigurationModel>
 {
-    /// <summary>
-    /// Represents configuration model validator
-    /// </summary>
-    public class ConfigurationValidator : BaseNopValidator<ConfigurationModel>
+    #region Ctor
+
+    public ConfigurationValidator(ILocalizationService localizationService)
     {
-        #region Ctor
+        RuleFor(model => model.TrackingCode)
+            .NotEmpty()
+            .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.TrackingCode.Required"));
 
-        public ConfigurationValidator(ILocalizationService localizationService)
-        {
-            RuleFor(model => model.TrackingCode)
-                .NotEmpty()
-                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.TrackingCode.Required"));
+        RuleFor(model => model.SiteId)
+            .NotEmpty()
+            .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.SiteId.Required"))
+            .When(model => model.UseServerSideApi);
 
-            RuleFor(model => model.SiteId)
-                .NotEmpty()
-                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.SiteId.Required"))
-                .When(model => model.UseServerSideApi);
-
-            RuleFor(model => model.ApiKey)
-                .NotEmpty()
-                .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.ApiKey.Required"))
-                .When(model => model.UseServerSideApi);
-        }
-
-        #endregion
+        RuleFor(model => model.ApiKey)
+            .NotEmpty()
+            .WithMessageAwait(localizationService.GetResourceAsync("Plugins.Widgets.CartStack.Fields.ApiKey.Required"))
+            .When(model => model.UseServerSideApi);
     }
+
+    #endregion
 }

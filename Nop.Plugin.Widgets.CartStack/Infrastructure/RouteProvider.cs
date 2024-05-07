@@ -3,27 +3,26 @@ using Microsoft.AspNetCore.Routing;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc.Routing;
 
-namespace Nop.Plugin.Widgets.CartStack.Infrastructure
+namespace Nop.Plugin.Widgets.CartStack.Infrastructure;
+
+/// <summary>
+/// Represents the plugin route provider
+/// </summary>
+public class RouteProvider : IRouteProvider
 {
     /// <summary>
-    /// Represents the plugin route provider
+    /// Register routes
     /// </summary>
-    public class RouteProvider : IRouteProvider
+    /// <param name="endpointRouteBuilder">Route builder</param>
+    public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        /// <summary>
-        /// Register routes
-        /// </summary>
-        /// <param name="endpointRouteBuilder">Route builder</param>
-        public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
-        {
-            endpointRouteBuilder.MapControllerRoute(CartStackDefaults.ConfigurationRouteName,
-                "Plugins/CartStack/Configure",
-                new { controller = "CartStack", action = "Configure", area = AreaNames.Admin });
-        }
-
-        /// <summary>
-        /// Gets a priority of route provider
-        /// </summary>
-        public int Priority => 0;
+        endpointRouteBuilder.MapControllerRoute(name: CartStackDefaults.ConfigurationRouteName,
+            pattern: "Plugins/CartStack/Configure",
+            defaults: new { controller = "CartStack", action = "Configure", area = AreaNames.ADMIN });
     }
+
+    /// <summary>
+    /// Gets a priority of route provider
+    /// </summary>
+    public int Priority => 0;
 }
