@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Nop.Core.Domain.Cms;
+﻿using Nop.Core.Domain.Cms;
 using Nop.Plugin.Widgets.CartStack.Components;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Plugins;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Web.Framework.Mvc.Routing;
 
 namespace Nop.Plugin.Widgets.CartStack;
 
@@ -19,10 +17,9 @@ public class CartStackPlugin : BasePlugin, IWidgetPlugin
     #region Fields
 
     private readonly CartStackSettings _cartStackSettings;
-    private readonly IActionContextAccessor _actionContextAccessor;
     private readonly ILocalizationService _localizationService;
+    private readonly INopUrlHelper _nopUrlHelper;
     private readonly ISettingService _settingService;
-    private readonly IUrlHelperFactory _urlHelperFactory;
     private readonly WidgetSettings _widgetSettings;
 
 
@@ -31,17 +28,15 @@ public class CartStackPlugin : BasePlugin, IWidgetPlugin
     #region Ctor
 
     public CartStackPlugin(CartStackSettings cartStackSettings,
-        IActionContextAccessor actionContextAccessor,
         ILocalizationService localizationService,
+        INopUrlHelper nopUrlHelper,
         ISettingService settingService,
-        IUrlHelperFactory urlHelperFactory,
         WidgetSettings widgetSettings)
     {
         _cartStackSettings = cartStackSettings;
-        _actionContextAccessor = actionContextAccessor;
+        _nopUrlHelper = nopUrlHelper;
         _localizationService = localizationService;
         _settingService = settingService;
-        _urlHelperFactory = urlHelperFactory;
         _widgetSettings = widgetSettings;
     }
 
@@ -54,7 +49,7 @@ public class CartStackPlugin : BasePlugin, IWidgetPlugin
     /// </summary>
     public override string GetConfigurationPageUrl()
     {
-        return _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext).RouteUrl(CartStackDefaults.ConfigurationRouteName);
+        return _nopUrlHelper.RouteUrl(CartStackDefaults.ConfigurationRouteName);
     }
 
     /// <summary>
